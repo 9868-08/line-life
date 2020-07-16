@@ -1,0 +1,25 @@
+version : '3'
+
+services:
+  nginx:
+    image: nginx:1.19.0
+    container_name: nginx
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+    restart: always
+    ports:
+      - 80:80
+
+  zabbix-agent:
+    image: zabbix/zabbix-agent:alpine-latest
+    container_name: zabbix-agent
+    ports:
+      - "10050:10050"
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
+     - ./config/.my.cnf:/var/lib/zabbix/.my.cnf:ro
+    env_file:
+      - ../.env_agent
+    privileged: true
+

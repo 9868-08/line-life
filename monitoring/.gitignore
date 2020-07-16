@@ -1,0 +1,7 @@
+/.git
+/PHP/html
+.git
+bak
+mysql_db
+*.bak
+*.swp

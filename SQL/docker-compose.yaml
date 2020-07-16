@@ -1,0 +1,51 @@
+version : '3'
+
+services:
+  mysql:
+    image: mysql:5.7.30
+    container_name: mysql
+    volumes:
+      - /app/db:/var/lib/mysql
+      - /app/db_etc/master.cnf:/etc/mysql/conf.d/repl.cnf
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      MYSQL_ROOT_PASSWORD: Agregator2020
+      MYSQL_DATABASE: default_schema
+      MYSQL_REPLICATION_MODE: master
+      MYSQL_REPLICATION_USER: repl
+      MYSQL_USER: my_user
+      MYSQL_DATABASE: test_repl
+    restart: always
+    ports:
+      - 3306:3306
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8183:80
+
+  zabbix-agent:
+    image: zabbix/zabbix-agent:alpine-latest
+    container_name: zabbix-agent
+    hostname: zabbix-agent
+    ports:
+      - "10050:10050"
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
+     - ./zbx_env/.my.cnf:/var/lib/zabbix/.my.cnf:ro
+    env_file:
+      - .env_agent
+    privileged: true
+
+
+

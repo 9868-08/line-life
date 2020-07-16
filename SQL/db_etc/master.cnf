@@ -1,0 +1,9 @@
+[mysqld]
+bind-address = 0.0.0.0 # чтобы можно было достучаться до базы извне
+server-id=1
+expire_logs_days = 2 # время жизни бинлогов в днях
+max_binlog_size = 100M # макс размер бинлогов
+binlog_do_db = agregator_main # БД для реплицирования ("экспорта" в бинлог)
+log_bin = /var/log/mysql/mydb-bin.log # путь к бинлогу
+
+

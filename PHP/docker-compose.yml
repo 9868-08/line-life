@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  apache:
+    build:
+      ./apache
+#    image: httpd:2.4
+#   image: php:7.4-apache
+    container_name: apache
+    volumes:
+      - ./html:/var/www/html
+      - ./etc/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on:
+      - php
+    ports:
+      - 8080:80
+
+#    command: docker exec -it apache a2enmod php7;apachectl -M
+#   command: docker exec -it apache apachectl -M
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./html:/var/www/html
+      - ./etc/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - php
+
+  php:
+    build:
+      ./php
+    container_name: php
+    volumes:
+      - ./html:/var/www/html
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+
+  zabbix-agent:
+    image: zabbix/zabbix-agent:alpine-latest
+    container_name: zabbix-agent
+    hostname: zabbix-agent
+    ports:
+      - "10050:10050"
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
+     - ./etc/zabbix-agent.cnf:/var/lib/zabbix/.my.cnf:ro
+    env_file:
+      - ../.env_agent
+    privileged: true
+

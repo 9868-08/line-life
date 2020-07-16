@@ -1,0 +1,17 @@
+# ID Слейва, удобно выбирать следующим числом после Мастера
+server-id = 2
+#
+# # Путь к relay логу
+relay-log = /var/log/mysql/mysql-relay-bin.log
+#
+# # Путь к bin логу на Мастере
+log_bin = /var/log/mysql/mysql-bin.log
+#
+# # База данных для репликации
+binlog_do_db = test_repl
+
+#expire_logs_days = 2 # время жизни логов в днях
+#replicate_do_db = test_repl # БД для реплицирования ("импорта" из лога)
+#relay-log = /var/lib/mysql/mydb-relay-bin # путь к логу
+#relay-log-index = /var/lib/mysql/mydb-relay-bin.index # путь к индексу лога
+report-host=sql2

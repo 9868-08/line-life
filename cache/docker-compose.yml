@@ -1,0 +1,24 @@
+version : '3'
+
+services:
+  memcached:
+    image: memcached
+    container_name: memcached
+    restart: always
+    ports:
+      - 11211:11211
+
+  zabbix-agent:
+    image: zabbix/zabbix-agent:alpine-latest
+    container_name: zabbix-agent
+    hostname: zabbix-agent
+    ports:
+      - "10050:10050"
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
+     - ./etc/zabbix-agent.cnf:/var/lib/zabbix/.my.cnf:ro
+    env_file:
+      - ../.env_agent
+    privileged: true
+
