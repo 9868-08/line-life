@@ -1,7 +1,6 @@
 /.git
 /PHP/html
 monitoring/zbx_env/var/lib/mysql
-.git
+.*
 bak
-.bak
 mysql_db

@@ -9,8 +9,8 @@ services:
       - /app/db_etc/master.cnf:/etc/mysql/conf.d/repl.cnf
     environment:
       MYSQL_USER: user
-      MYSQL_PASSWORD: user
-      MYSQL_ROOT_PASSWORD: Agregator2020
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: default_schema
       MYSQL_REPLICATION_MODE: master
       MYSQL_REPLICATION_USER: repl
