@@ -1,76 +1,36 @@
 version: '3.5'
 services:
- zabbix-server:
+ zabbix:
   image: zabbix/zabbix-server-mysql:ubuntu-5.0-latest
-  container_name: zabbix-server
+  container_name: zabbix
   ports:
    - "10051:10051"
   volumes:
    - /etc/localtime:/etc/localtime:ro
    - ./etc/alertscripts:/usr/lib/zabbix/alertscripts:ro
    - ./etcexternalscripts:/usr/lib/zabbix/externalscripts:ro
-  links:
-   - mysql-server:mysql-server
-  ulimits:
-   nproc: 65535
-   nofile:
-    soft: 20000
-    hard: 40000
+   - /etc/hosts:/etc/hosts:ro
   env_file:
    - .env_db_mysql
    - .env_srv
-  secrets:
-   - MYSQL_USER
-   - MYSQL_PASSWORD
-   - MYSQL_ROOT_PASSWORD
-#   - client-key.pem
-#   - client-cert.pem
-#   - root-ca.pem
   depends_on:
-   - mysql-server
-#  devices:
-#   - "/dev/ttyUSB0:/dev/ttyUSB0"
-  stop_grace_period: 30s
-  sysctls:
-   - net.ipv4.ip_local_port_range=1024 65000
-   - net.ipv4.conf.all.accept_redirects=0
-   - net.ipv4.conf.all.secure_redirects=0
-   - net.ipv4.conf.all.send_redirects=0
+   - mysql
 
- zabbix-web-apache-mysql:
+ web:
   image: zabbix/zabbix-web-apache-mysql:ubuntu-5.0-latest
-  container_name: web-apache
+  container_name: web
   ports:
    - "80:8080"
-   - "443:443"
-  links:
-   - mysql-server:mysql-server
-   - zabbix-server:zabbix-server
   volumes:
    - /etc/localtime:/etc/localtime:ro
   env_file:
    - .env_db_mysql
    - .env_web
-  secrets:
-   - MYSQL_USER
-   - MYSQL_PASSWORD
-#   - client-key.pem
-#   - client-cert.pem
-#   - root-ca.pem
   depends_on:
-   - mysql-server
-   - zabbix-server
-  healthcheck:
-   test: ["CMD", "curl", "-f", "http://localhost:8080/"]
-   interval: 10s
-   timeout: 5s
-   retries: 3
-   start_period: 30s
-  stop_grace_period: 10s
-  sysctls:
-   - net.core.somaxconn=65535
+   - mysql
+   - zabbix
 
- zabbix-agent:
+ agent:
   image: zabbix/zabbix-agent:ubuntu-5.0-latest
   container_name: agent
   ports:
@@ -83,8 +43,14 @@ services:
   privileged: true
   pid: "host"
   stop_grace_period: 5s
+  depends_on:
+   - zabbix
+  links:                                                                                                                                                               
+    - zabbix
 
- mysql-server:
+
+
+ mysql:
   image: mysql:8.0
   container_name: mysql
   command:
@@ -92,49 +58,9 @@ services:
    - --character-set-server=utf8
    - --collation-server=utf8_bin
    - --default-authentication-plugin=mysql_native_password
-#   - --require-secure-transport
-#   - --ssl-ca=/run/secrets/root-ca.pem
-#   - --ssl-cert=/run/secrets/server-cert.pem
-#   - --ssl-key=/run/secrets/server-key.pem
   volumes:
    - ./mysql_db:/var/lib/mysql:rw
   env_file:
    - .env_db_mysql
-  secrets:
-   - MYSQL_USER
-   - MYSQL_PASSWORD
-   - MYSQL_ROOT_PASSWORD
-#   - server-key.pem
-#   - server-cert.pem
-#   - root-ca.pem
   stop_grace_period: 1m
 
-
-# elasticsearch:
-#  image: elasticsearch
-#  environment:
-#   - transport.host=0.0.0.0
-#   - discovery.zen.minimum_master_nodes=1
-#  networks:
-#   zbx_net_backend:
-#    aliases:
-#     - elasticsearch
-
-
-secrets:
-  MYSQL_USER:
-    file: ./.MYSQL_USER
-  MYSQL_PASSWORD:
-    file: ./.MYSQL_PASSWORD
-  MYSQL_ROOT_PASSWORD:
-    file: ./.MYSQL_ROOT_PASSWORD
-#  client-key.pem:
-#    file: ./.ZBX_DB_KEY_FILE
-#  client-cert.pem:
-#    file: ./.ZBX_DB_CERT_FILE
-#  root-ca.pem:
-#    file: ./.ZBX_DB_CA_FILE
-#  server-cert.pem:
-#    file: ./.DB_CERT_FILE
-#  server-key.pem:
-#    file: ./.DB_KEY_FILE

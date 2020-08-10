@@ -1,4 +1,1 @@
-Admin/zabbix
-
-http://5.101.120.21
-
+monitoring servers on cluster Линия Жизни
