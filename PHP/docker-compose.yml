@@ -55,3 +55,12 @@ services:
       - ../.env_agent
     privileged: true
 
+  sphinx:
+    image: yfix/sphinxsearch
+    container_name: sphinx
+    ports:
+    - "36307:36307" # bind to local interface only!
+    volumes:
+    - ./sphinx_data:/opt/sphinx/index  # directory where sphinx will store index data
+    - ./etc/sphinx.conf:/opt/sphinx/conf/sphinx.conf  # SphinxSE configuration file
+      #    mem_limit: 512m # match indexer.value from sphinx.conf
