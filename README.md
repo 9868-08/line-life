@@ -1,8 +1,8 @@
-2020_07_09 status:  
+2020_11 status:  
 sql master and slave working.  
-Реплицируется только agregator_main (https://www.percona.com/blog/2009/05/14/why-mysqls-binlog-do-db-option-is-dangerous/)  
+db agregator_main in replication
 nginx proxy working with load-balancing  
-PHP working. (https://habr.com/ru/post/346086/)  
+PHP server working. (https://habr.com/ru/post/346086/)  
 cached working  
-monitoring unworking. This is in process.  
+monitoring working with alerts. BD doesn't in github.
 
